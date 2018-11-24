@@ -3,7 +3,9 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
-Assets/
+Assets/Cinemachine
+Assets/Gizmos
+Assets/TextMesh Pro
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
