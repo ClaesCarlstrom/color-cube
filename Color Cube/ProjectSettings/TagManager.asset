@@ -12,6 +12,7 @@ TagManager:
   - KillZone
   - Blackened
   - EndZone
+  - Platform
   layers:
   - Default
   - TransparentFX

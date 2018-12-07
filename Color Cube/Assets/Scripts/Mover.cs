@@ -25,12 +25,12 @@ public class Mover : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void FixedUpdate () {
         if (movingForward)
-            transform.position += new Vector3(step, 0, 0);
+            transform.position += new Vector3(step, 0, 0)*Time.fixedDeltaTime;
 
         if (!movingForward)
-            transform.position -= new Vector3(step, 0, 0);
+            transform.position -= new Vector3(step, 0, 0) * Time.fixedDeltaTime;
 
         if (transform.position.x >= position2.transform.position.x) movingForward = false;
         if (transform.position.x <= position1.transform.position.x) movingForward = true;

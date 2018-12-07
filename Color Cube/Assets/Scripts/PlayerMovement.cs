@@ -3,17 +3,20 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-    public float speed =8;
     public float rotationSpeed = 10;
-    public float jumpForce;
-    public float fallingOffset = 0.5f;
+    public float jumpForce = 70;
+    public float speed = 250;
+    public bool forceMovement = false;
 
-    private bool buttonPressed = false;
-    private bool inAir = false;
-    private float pastYPosition;
+    private float horizontal;
+    private bool rotate = false;
+    private bool rotationAvailable = true;
+    private bool jump = false;
+    private bool inAir = true;
+
+
     private Rigidbody2D rb;
     
-
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
@@ -27,46 +30,77 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
     void OnCollisionEnter2D(Collision2D col){
-        Debug.Log("Collision ENTER");
+        Debug.Log("Player: Collision ENTER");
         inAir = false;
-        pastYPosition = transform.position.y - fallingOffset;
-        buttonPressed = false;
     }
 
-    void FixedUpdate () {
-        float horizontal = Input.GetAxis("Horizontal");
-        Vector3 movement = new Vector3(horizontal * speed, 0f, 0f);
+    void OnCollisionExit2D(Collision2D col)
+    {
+        Debug.Log("Player: Collision EXIT");
+        inAir = true;
+    }
 
-        transform.position += movement;
+    //Updates every frame
+    void Update()
+    {
+        //Get horizontal movement
+        horizontal = Input.GetAxis("Horizontal")*speed;
 
-        if(inAir && Input.GetKeyUp(KeyCode.Space)) //if releasing Space while in air jumping...
+        //Jump button pressed
+        if (Input.GetButton("Jump")) 
         {
-            Debug.Log("released space");
-            buttonPressed = true;
-        }
+            if (inAir && rotationAvailable)
+                rotate = true;
 
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            if(transform.position.y < pastYPosition) // if falling down, space = rotation
+            if (!inAir)
             {
-                Debug.Log("falling down");
-                transform.Rotate(new Vector3(0, 0, rotationSpeed), Space.Self);
-            }else if (!inAir) // if not falling down and if not in air - jump and set in air to true
-            {
-                Debug.Log("jump!");
-                rb.AddForce(new Vector2(0f, jumpForce));
-                inAir = true;
-            }else if(inAir && buttonPressed) // if in air and not fallling down when pressing space - rotate
-            {
-                Debug.Log("rotate while jumping");
-                transform.Rotate(new Vector3(0, 0, rotationSpeed), Space.Self);
+                jump = true;
+                rotationAvailable = false;  //Player will not rotate directly on jump
             }
+        }
 
+        //Jump button released
+        if (Input.GetButtonUp("Jump"))
+        {
+            Debug.Log("Released jump button");
+            if (inAir)
+                rotate = false;
+
+            rotationAvailable = true;   //Player is able to rotate if pressing the jump button again
+        }
+    }
+
+    //For physics
+    void FixedUpdate () {
+        //Move horizontal
+        if (forceMovement)
+        {
+            Vector2 move = new Vector2(horizontal, 0f);
+            rb.AddForce(move);
+        }
+        else
+        {
+            Vector3 movement = new Vector3(horizontal, 0f, 0f) * Time.fixedDeltaTime;
+            transform.position += movement;
+        }
+
+
+        //Jump
+        if (jump)
+        {
+            Debug.Log("JUMP!");
+            rb.AddForce(new Vector2(0f, jumpForce));
+            inAir = true;
+            jump = false;
+        }
+
+        //Rotate
+        if(rotate)
+        {
+            Debug.Log("ROTATE!");
+            transform.Rotate(new Vector3(0, 0, rotationSpeed), Space.Self);
         }
 
     }
-
     
-
 }

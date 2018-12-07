@@ -160,10 +160,7 @@ Prefab:
     - target: {fileID: 114117649907613038, guid: 7077e3eb08c508740ba60760d317b4d7,
         type: 2}
       propertyPath: m_Text
-      value: 'CONGRATULATIONS
-
-
-        YOU COMPLETED THE GAME'
+      value: CONGRATULATIONS
       objectReference: {fileID: 0}
     - target: {fileID: 224865987328457994, guid: 7077e3eb08c508740ba60760d317b4d7,
         type: 2}
