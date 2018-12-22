@@ -23,19 +23,17 @@ public class PlatformCollider : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("ENTERING platform: " + platformColor+" with collider tag: "+col.tag);
+       // Debug.Log("ENTERING platform: " + platformColor+" with collider tag: "+col.tag);
 
         if (!col.CompareTag("Player"))
         {
             if (col.CompareTag(platformColor) || match)
             {
-                Debug.Log("Match = true");
                 match = true;
                 audioSource.Play();
             }
             else
             {
-                Debug.Log("Match = false");
                 gameObject.SetActive(false);
                 match = false;
             }
@@ -44,11 +42,10 @@ public class PlatformCollider : MonoBehaviour {
 
     void OnTriggerExit2D(Collider2D col)
     {
-        Debug.Log("EXITING platform: " + platformColor + " with collider tag: " + col.tag);
+        //Debug.Log("EXITING platform: " + platformColor + " with collider tag: " + col.tag);
 
         if (col.CompareTag(platformColor))
         {
-            Debug.Log("Setting match = false");
             match = false;
         }
     }

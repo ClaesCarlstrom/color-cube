@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class ColorTrigger : MonoBehaviour {
 
-    /* This component is on the players different color triggers.
+    /* This component is found on the players different color triggers.
      * It finds the child object blackened and enables that object when touching a 
      * black platform. It also disables the trigger.
      *
@@ -13,17 +14,22 @@ public class ColorTrigger : MonoBehaviour {
 
     private Transform blackened;
     private CapsuleCollider2D trigger;
+    private Canvas c;
+    private Animator blackScreen;
 
     void Start()
     {
         blackened = transform.Find("Blackened"); //Get child
         trigger = GetComponent<CapsuleCollider2D>(); // Get trigger
+
+        blackScreen = FindObjectOfType<Canvas>().GetComponentInChildren<Animator>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Black")) //If touching black platform
         {
+            blackScreen.SetTrigger("Black");
             trigger.enabled = false;    // disable trigger
             blackened.gameObject.SetActive(true); //enable child object
         }

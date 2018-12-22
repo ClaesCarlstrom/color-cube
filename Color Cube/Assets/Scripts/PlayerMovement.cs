@@ -1,18 +1,27 @@
 ﻿
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerMovement : MonoBehaviour {
 
     public float rotationSpeed = 10;
     public float jumpForce = 70;
     public float speed = 250;
-    public bool forceMovement = false;
+    private bool forceMovement = false;
+    public float moveForce = 3;
+    public float maxVelocity = 20;
 
     private float horizontal;
     private bool rotate = false;
     private bool rotationAvailable = true;
     private bool jump = false;
     private bool inAir = true;
+
+    public ParticleSystem dustFX;
+    public ParticleSystem trailFX;
+    public ParticleSystem jumpDustFX;
+    private float startTimeBtwTrail, timeBtwTrail;
+    private Animator cameraShake;
 
 
     private Rigidbody2D rb;
@@ -27,16 +36,24 @@ public class PlayerMovement : MonoBehaviour {
             speed = GameData.MovementSensitivity;
         speed = speed / 10;
         jumpForce = jumpForce * 100;
-	}
+
+        forceMovement = GameData.ForceMovement;
+
+        cameraShake = FindObjectOfType<CinemachineVirtualCamera>().GetComponent<Animator>();
+
+        startTimeBtwTrail = Time.deltaTime;
+        timeBtwTrail = 0;
+    }
 
     void OnCollisionEnter2D(Collision2D col){
-        Debug.Log("Player: Collision ENTER");
         inAir = false;
+        cameraShake.SetTrigger("Shake");
+        Instantiate(dustFX,transform.position+new Vector3(0f,-0.6f,0f), transform.localRotation);
+
     }
 
     void OnCollisionExit2D(Collision2D col)
     {
-        Debug.Log("Player: Collision EXIT");
         inAir = true;
     }
 
@@ -45,6 +62,20 @@ public class PlayerMovement : MonoBehaviour {
     {
         //Get horizontal movement
         horizontal = Input.GetAxis("Horizontal")*speed;
+
+
+        if(horizontal != 0)
+        {
+            if (timeBtwTrail <= 0)
+            {
+                Instantiate(trailFX, transform.position + new Vector3(0f, -0.6f, 0f), Quaternion.identity);
+                timeBtwTrail = startTimeBtwTrail;
+            }
+            else
+            {
+                timeBtwTrail -= Time.deltaTime;
+            }
+        }
 
         //Jump button pressed
         if (Input.GetButton("Jump")) 
@@ -56,13 +87,14 @@ public class PlayerMovement : MonoBehaviour {
             {
                 jump = true;
                 rotationAvailable = false;  //Player will not rotate directly on jump
+                Instantiate(jumpDustFX, transform.position + new Vector3(0f, -0.6f, 0f), transform.localRotation);
+
             }
         }
 
         //Jump button released
         if (Input.GetButtonUp("Jump"))
         {
-            Debug.Log("Released jump button");
             if (inAir)
                 rotate = false;
 
@@ -75,8 +107,9 @@ public class PlayerMovement : MonoBehaviour {
         //Move horizontal
         if (forceMovement)
         {
-            Vector2 move = new Vector2(horizontal, 0f);
-            rb.AddForce(move);
+            Vector2 move = new Vector2(horizontal*moveForce, 0f);
+            if (rb.velocity.x < maxVelocity) 
+                rb.AddForce(move);
         }
         else
         {
@@ -88,7 +121,6 @@ public class PlayerMovement : MonoBehaviour {
         //Jump
         if (jump)
         {
-            Debug.Log("JUMP!");
             rb.AddForce(new Vector2(0f, jumpForce));
             inAir = true;
             jump = false;
@@ -97,7 +129,6 @@ public class PlayerMovement : MonoBehaviour {
         //Rotate
         if(rotate)
         {
-            Debug.Log("ROTATE!");
             transform.Rotate(new Vector3(0, 0, rotationSpeed), Space.Self);
         }
 

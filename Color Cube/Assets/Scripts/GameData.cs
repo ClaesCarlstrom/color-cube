@@ -5,6 +5,7 @@ using UnityEngine;
 public static class GameData{
 
     private static float rotationSensitivity, movementSensitivity, musicVolume, soundVolume;
+    private static bool forceMovement;
 
     public static float RotationSensitivity
     {
@@ -48,6 +49,17 @@ public static class GameData{
         set
         {
             soundVolume = value;
+        }
+    }
+    public static bool ForceMovement
+    {
+        get
+        {
+            return forceMovement;
+        }
+        set
+        {
+            forceMovement = value;
         }
     }
 }

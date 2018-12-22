@@ -27,6 +27,7 @@ public class MenuManager : MonoBehaviour {
         GameData.MovementSensitivity = 250;
         GameData.MusicVolume = 0.7f;
         GameData.SoundVolume = 0.1f;
+        GameData.ForceMovement = false;
     }
 
     public void PlayGame()
@@ -46,6 +47,11 @@ public class MenuManager : MonoBehaviour {
     public void SetGuideOnOff(bool g)
     {
         guideOn = g;
+    }
+
+    public void SetForceMovementOnOff(bool f)
+    {
+        GameData.ForceMovement = f;
     }
 
     public void SetRotationSensitivity(float r)
